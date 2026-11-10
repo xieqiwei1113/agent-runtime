@@ -7,4 +7,6 @@ def planner(state):
 
 if __name__ == "__main__":
     state = AgentRuntime(planner).run(Task("summarize today's work"))
-    print(state.status, state.result)
+    print("status:", state.status.value)
+    print("result:", state.result)
+    print("history:", state.history)
