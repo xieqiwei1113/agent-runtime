@@ -1,20 +1,38 @@
-# M0 Architecture
+# Agent Runtime Architecture
 
-M0 intentionally keeps the runtime small.
+The project is intentionally organized around three portfolio-level milestones.
 
-## Core objects
+## Milestone 1 — Minimal Runnable Core
+
+The smallest executable runtime loop:
+
+Task -> Runtime -> Planner -> Result -> Finish
+
+Core objects:
 
 - Task: immutable user goal.
-- AgentState: execution state, history, result, and error.
-- Planner: injected callable that decides the next result/action.
+- Planner: injected deterministic callable.
 - AgentRuntime: owns lifecycle transitions.
+- AgentState: records result, status, history, and error.
 
-## Lifecycle
+The purpose is to prove the runtime contract, not to demonstrate advanced agent behavior.
 
-1. Create AgentState.
-2. Mark task running and record an event.
-3. Invoke the planner.
-4. Persist the planner result into state.
-5. Mark completed, or capture an exception as failed.
+## Milestone 2 — State Machine + Checkpoint
 
-The runtime is independent from any model SDK or orchestration framework. Later milestones add explicit action/tool abstractions, memory, evaluation, recovery, and observability.
+The runtime becomes capable of multi-step execution:
+
+Task -> Action -> Execute -> State Update -> Checkpoint -> Action -> Finish
+
+This milestone owns Action, state variables, execution history, checkpoints, and replay/recovery foundations.
+
+## Milestone 3 — Real Tool + Simple Planner
+
+The runtime connects planning to an actual side-effect-free tool:
+
+Task -> Rule Planner -> Tool Router -> Tool -> Observation -> State
+
+The planner remains deterministic. Tool interfaces are kept stable so an LLM planner can replace the rule planner later without redesigning the runtime.
+
+## Design principle
+
+Do not add framework dependencies merely to make the demo look sophisticated. The portfolio value comes from explicit runtime contracts, deterministic tests, state transitions, tool execution, and clear extension points.
