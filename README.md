@@ -8,19 +8,19 @@ A minimal, framework-agnostic runtime for long-running AI agents.
 
 Task -> Planner -> Result -> Finish
 
-**Completed.** The runtime provides an explicit task/state lifecycle, an injected planner, execution history, deterministic tests, and a runnable example.
+**Completed.** Explicit task/state lifecycle, planner injection, execution history, deterministic tests, and a runnable example.
 
 ### Milestone 2 — State Machine + Checkpoint
 
 Task -> Action -> Execute -> State Update -> Checkpoint -> Action -> Finish
 
-**Completed.** The runtime now supports multi-step Actions, shared state variables, per-step execution history, immutable checkpoints, and deterministic failure handling.
+**Completed.** Multi-step Actions, shared state variables, per-step history, immutable checkpoints, and deterministic failure handling.
 
 ### Milestone 3 — Real Tool + Simple Planner
 
-Task -> Rule Planner -> Tool Router -> Tool -> Observation -> State
+Task -> Rule Planner -> Tool Registry -> Tool -> Observation -> State
 
-**Next.** Adds a Tool interface/registry, one real executable tool, a deterministic rule-based planner, and end-to-end tool execution.
+**Completed.** The runtime now has a framework-independent Tool interface, deterministic ToolRegistry routing, a RulePlanner, and an end-to-end executable example.
 
 ## Architecture boundary
 
@@ -29,10 +29,10 @@ M1: Task -> Runtime -> Planner -> Result -> Finish
 
 M2: Task -> Plan -> Action -> Execute -> State Update -> Checkpoint -> Finish
 
-M3: Task -> Rule Planner -> Tool Router -> Tool -> Observation -> State
+M3: Task -> Rule Planner -> Tool Registry -> Tool -> Observation -> State
 ```
 
-The runtime remains independent from LangGraph and model SDKs. An LLM planner can be added later behind the planner interface.
+The runtime remains independent from LangGraph and model SDKs. An LLM planner can replace RulePlanner later without changing the Tool or Runtime contracts.
 
 ## Development
 
@@ -42,4 +42,5 @@ pytest
 ruff check .
 python examples/basic_agent.py
 python examples/m2_state_machine.py
+python examples/m3_tool_agent.py
 ```
