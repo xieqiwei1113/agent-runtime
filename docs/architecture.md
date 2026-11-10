@@ -1,38 +1,43 @@
 # Agent Runtime Architecture
 
-The project is intentionally organized around three portfolio-level milestones.
+The project is organized around three portfolio-level milestones.
 
-## Milestone 1 — Minimal Runnable Core
-
-The smallest executable runtime loop:
+## M1 — Minimal Runnable Core
 
 Task -> Runtime -> Planner -> Result -> Finish
 
+The runtime owns task lifecycle, state, history, success/failure, and planner injection.
+
+## M2 — State Machine + Checkpoint
+
+Task -> Plan -> Action -> Execute -> State Update -> Checkpoint -> Finish
+
 Core objects:
 
-- Task: immutable user goal.
-- Planner: injected deterministic callable.
-- AgentRuntime: owns lifecycle transitions.
-- AgentState: records result, status, history, and error.
+- Action: one executable step with input, status, output, and error.
+- AgentState: shared variables, actions, history, result, and checkpoints.
+- ActionExecutor: injected execution boundary.
+- StateCheckpoint: immutable snapshot after each action.
 
-The purpose is to prove the runtime contract, not to demonstrate advanced agent behavior.
+M2 guarantees sequential execution, state propagation between actions, checkpoint creation at each action boundary, and deterministic failure handling.
 
-## Milestone 2 — State Machine + Checkpoint
+## M3 — Real Tool + Simple Planner
 
-The runtime becomes capable of multi-step execution:
+Task -> Rule Planner -> Tool Registry -> Tool -> Observation -> State
 
-Task -> Action -> Execute -> State Update -> Checkpoint -> Action -> Finish
+Core objects:
 
-This milestone owns Action, state variables, execution history, checkpoints, and replay/recovery foundations.
+- Tool: named executable capability with a stable input/output boundary.
+- ToolRegistry: deterministic registration, lookup, and execution.
+- RulePlanner: deterministic planner that converts a task into an Action targeting a tool.
+- ActionExecutor: bridges the runtime Action to ToolRegistry execution.
 
-## Milestone 3 — Real Tool + Simple Planner
+M3 proves the complete planning-to-execution path without coupling the runtime to an LLM SDK or agent framework.
 
-The runtime connects planning to an actual side-effect-free tool:
+An LLM planner can later replace RulePlanner because the runtime consumes the same Action contract.
 
-Task -> Rule Planner -> Tool Router -> Tool -> Observation -> State
+## Intentional boundaries
 
-The planner remains deterministic. Tool interfaces are kept stable so an LLM planner can replace the rule planner later without redesigning the runtime.
+The project deliberately stops at these three milestones. Memory, external services, replay orchestration, and model-specific planning are not part of the core runtime.
 
-## Design principle
-
-Do not add framework dependencies merely to make the demo look sophisticated. The portfolio value comes from explicit runtime contracts, deterministic tests, state transitions, tool execution, and clear extension points.
+The portfolio value comes from explicit runtime contracts, state transitions, checkpointing, deterministic tool execution, and clear extension points.
