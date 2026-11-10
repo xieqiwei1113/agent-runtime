@@ -6,57 +6,26 @@ A minimal, framework-agnostic runtime for long-running AI agents.
 
 ### Milestone 1 — Minimal Runnable Core
 
-Goal: prove the runtime can execute a task end-to-end.
+Task -> Planner -> Result -> Finish
 
-- Task input
-- Injected deterministic planner
-- Runtime lifecycle
-- Result / success / failure
-- Unit tests
-- Runnable example
-
-**Not included:** real LLM, real tools, memory, checkpoint/replay.
+Implemented now. The runtime provides an explicit task/state lifecycle, an injected planner, execution history, deterministic tests, and a runnable example.
 
 ### Milestone 2 — State Machine + Checkpoint
 
-Goal: prove the runtime can manage multi-step execution.
-
-- Action abstraction
-- Multi-step execution
-- State variables
-- Execution history
-- Checkpoints
-- Failure/replay foundation
-- Unit tests and demo
+Planned next. Adds multi-step Actions, state transitions, checkpoints, and replay/recovery foundations.
 
 ### Milestone 3 — Real Tool + Simple Planner
 
-Goal: connect the runtime to one real executable tool while keeping planning deterministic.
-
-- Tool interface + registry
-- One real tool (for example, text/file retrieval)
-- Rule-based planner
-- Tool result written back to state
-- End-to-end demo
-- Stable interfaces for a future LLM planner
-
-## Current repository status
-
-The repository has already implemented **Milestone 1 and Milestone 2**. The existing M1 code should be treated as the implementation of Milestone 2, not as extra scope that needs to be deleted.
-
-The next development target is **Milestone 3: Real Tool + Simple Planner**.
+Planned after M2. Adds a Tool interface/registry, one real executable tool, a deterministic rule-based planner, and end-to-end tool execution.
 
 ## Architecture boundary
 
 ```text
-Milestone 1
-Task -> Runtime -> Planner -> Result -> Finish
+M1: Task -> Runtime -> Planner -> Result -> Finish
 
-Milestone 2
-Task -> Plan/Action -> Execute -> State Update -> Checkpoint -> Finish
+M2: Task -> Action -> Execute -> State Update -> Checkpoint -> Finish
 
-Milestone 3
-Task -> Rule Planner -> Tool Router -> Tool -> Observation -> State -> Finish
+M3: Task -> Rule Planner -> Tool Router -> Tool -> Observation -> State
 ```
 
 The runtime remains independent from LangGraph and model SDKs. An LLM planner can be added later behind the planner interface.
@@ -67,4 +36,5 @@ The runtime remains independent from LangGraph and model SDKs. An LLM planner ca
 pip install -e ".[dev]"
 pytest
 ruff check .
+python examples/basic_agent.py
 ```
